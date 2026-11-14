@@ -1,0 +1,22 @@
+test_black_loop_endpoints (test_beyond.CharacterFilmTests) ... ok
+test_blink_closes_iris (test_beyond.CharacterFilmTests) ... ok
+test_closing_hides_the_inner_universe (test_beyond.CharacterFilmTests) ... ok
+test_color_layers_reconstruct_every_character (test_beyond.CharacterFilmTests) ... ok
+test_deterministic_finite_fields (test_beyond.CharacterFilmTests) ... ok
+test_every_major_scene_moves (test_beyond.CharacterFilmTests) ... ok
+test_iris_is_distinct_from_black_pupil (test_beyond.CharacterFilmTests) ... ok
+test_no_block_or_image_drawing (test_beyond.CharacterFilmTests) ... ok
+test_no_hard_cuts_at_scene_boundaries (test_beyond.CharacterFilmTests) ... ok
+test_seeking_does_not_change_later_render_results (test_beyond.CharacterFilmTests) ... ok
+test_text_grid_has_consistent_line_lengths (test_beyond.CharacterFilmTests) ... ok
+test_whole_inner_eye_fits_inside_outer_pupil (test_beyond.CharacterFilmTests) ... ok
+test_empty_timings_are_finite_zeroes (test_runtime.FrameTimingTests) ... ok
+test_long_playback_keeps_a_bounded_window_and_correct_totals (test_runtime.FrameTimingTests) ... ok
+test_diagnostic_failure_still_closes_the_window (test_runtime.PlaybackLifecycleTests) ... ok
+test_normal_close_succeeds_and_is_idempotent (test_runtime.PlaybackLifecycleTests) ... ok
+test_render_failure_reaches_the_launcher (test_runtime.PlaybackLifecycleTests) ... ok
+
+----------------------------------------------------------------------
+Ran 17 tests in 1.565s
+
+OK

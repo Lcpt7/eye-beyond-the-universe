@@ -1,0 +1,13 @@
+__pycache__/
+*.pyc
+.venv*/
+venv/
+.pytest_cache/
+/legacy/
+/proofs/*
+!/proofs/VERIFICATION.md
+!/proofs/final-live.json
+!/proofs/benchmark-final.json
+!/proofs/tests-final.txt
+!/proofs/prepublish-tests.txt
+!/proofs/prepublish-live.json

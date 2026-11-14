@@ -1,0 +1,30 @@
+{
+  "title": "瞳界·星渊",
+  "python": "3.10.11",
+  "numpy": "1.26.4",
+  "tk": 8.6,
+  "renderer": "Tk Canvas / text items exclusively",
+  "started": "2026-11-15T01:26:02",
+  "targetFps": 24,
+  "columns": 189,
+  "rows": 54,
+  "font": "Consolas",
+  "fontPixels": 12,
+  "canvasItemCount": 432,
+  "canvasItemTypes": [
+    "text"
+  ],
+  "status": "user-exit",
+  "frames": 40,
+  "elapsedSeconds": 2.004,
+  "actualFps": 19.96,
+  "position": 118.857,
+  "cycles": 0,
+  "paused": false,
+  "fullScreen": false,
+  "error": null,
+  "meanFieldMs": 15.498,
+  "p95FieldMs": 16.38,
+  "meanTextUpdateMs": 5.175,
+  "fieldSampleWindowFrames": 40
+}

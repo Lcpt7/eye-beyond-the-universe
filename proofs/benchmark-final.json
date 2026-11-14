@@ -1,0 +1,8 @@
+{
+  "frames": 144,
+  "columns": 208,
+  "rows": 72,
+  "meanFieldMs": 17.483,
+  "p95FieldMs": 27.396,
+  "output": "headless character generation, excludes Tk presentation"
+}
