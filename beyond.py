@@ -74,6 +74,8 @@ class Film:
             except (AttributeError, OSError):
                 pass
         self.root = tk.Tk()
+        if getattr(args, "hidden", False):
+            self.root.withdraw()
         self.root.title("瞳界 · 星渊 | EYE → BEYOND THE UNIVERSE")
         self.root.configure(background="#000000")
         width = min(1360, self.root.winfo_screenwidth()-60)
@@ -90,7 +92,8 @@ class Film:
         self.heading = tk.Label(self.root, bg="black", fg="#c6bedb", font=("Microsoft YaHei UI", 13), borderwidth=0)
         self.caption = tk.Label(self.root, bg="black", fg="#9488af", font=("Microsoft YaHei UI", 10), borderwidth=0)
         self.heading.place(relx=.5, y=24, anchor="n")
-        self.caption.place(relx=.5, rely=1., y=-25, anchor="s")
+        self.caption.place(relx=.5, rely=1., y=-80, anchor="s")
+        self.build_controls()
         self.root.update_idletasks()
         self.universe = None
         self.grid_shape = None
@@ -110,12 +113,13 @@ class Film:
                        "tk": tk.TkVersion, "renderer": "Tk Canvas / text items exclusively",
                        "started": datetime.now().isoformat(timespec="seconds"), "targetFps": args.fps}
         self.root.bind("<Configure>", self.resize)
-        self.root.bind("<space>", self.toggle_pause)
+        self.root.bind("<space>", self.keyboard_pause)
         self.root.bind("<Left>", lambda e: self.seek(-5))
         self.root.bind("<Right>", lambda e: self.seek(5))
         self.root.bind("<Home>", lambda e: self.restart())
         self.root.bind("<r>", lambda e: self.restart())
         self.root.bind("<h>", lambda e: self.toggle_help())
+        self.root.bind("<F1>", lambda e: self.toggle_help())
         self.root.bind("<F11>", lambda e: self.toggle_fullscreen())
         self.root.bind("<Escape>", lambda e: self.close("user-exit"))
         self.root.bind("<q>", lambda e: self.close("user-exit"))
@@ -123,6 +127,35 @@ class Film:
         self.root.report_callback_exception = self.callback_error
         self.root.after(20, self.step)
         self.root.focus_set()
+
+    def build_controls(self):
+        """Visible, keyboard-focusable controls for viewers who do not know hotkeys."""
+        self.controls = self.tk.Frame(self.root, bg="black")
+        self.controls.place(relx=.5, rely=1., y=-16, anchor="s")
+        self.buttons = {}
+        actions = (
+            ("pause", "暂停", self.toggle_pause),
+            ("restart", "重新播放", self.restart),
+            ("fullscreen", "退出全屏" if self.args.fullscreen else "全屏", self.toggle_fullscreen),
+            ("help", "操作说明", self.toggle_help),
+            ("exit", "退出", lambda: self.close("user-exit")),
+        )
+        for name, title, command in actions:
+            button = self.tk.Button(
+                self.controls, text=title, command=command, font=("Microsoft YaHei UI", 10),
+                fg="#e2d9ed", bg="#20132c", activeforeground="#ffffff", activebackground="#402a54",
+                relief="flat", borderwidth=0, padx=14, pady=10, cursor="hand2", takefocus=True,
+                highlightthickness=1, highlightbackground="#392744", highlightcolor="#d6b8f4",
+            )
+            button.pack(side="left", padx=5)
+            self.buttons[name] = button
+
+    def keyboard_pause(self, event):
+        # Space activates a focused button through Tk's native binding. Do not
+        # also pause playback when someone uses Space on another control.
+        if event.widget.winfo_class() in ("Button", "TButton"):
+            return None
+        return self.toggle_pause()
 
     def resize(self, event):
         if event.widget is self.root:
@@ -134,7 +167,7 @@ class Film:
         cell_w = self.font.measure("M")
         cell_h = self.font.metrics("linespace")
         columns = max(48, min(300, (self.root.winfo_width()-32)//cell_w))
-        rows = max(24, min(100, (self.root.winfo_height()-100)//cell_h))
+        rows = max(24, min(100, (self.root.winfo_height()-160)//cell_h))
         rows = max(24, min(rows, int(columns*cell_w/cell_h/1.70)))
         layout = columns, rows, cell_w, cell_h
         if layout != self.grid_shape:
@@ -152,7 +185,7 @@ class Film:
             self.report["canvasItemCount"] = len(self.items)
             self.report["canvasItemTypes"] = sorted({self.text.type(item) for item in self.items})
         width, height = columns*cell_w, rows*cell_h
-        self.text.place(x=(self.root.winfo_width()-width)//2, y=(self.root.winfo_height()-height)//2,
+        self.text.place(x=(self.root.winfo_width()-width)//2, y=(self.root.winfo_height()-height)//2-22,
                         width=width+2, height=height+2)
         self.resize_pending = False
 
@@ -169,8 +202,14 @@ class Film:
             self.text.tk.eval(";".join(commands))
         heading_color = "#%02x%02x%02x" % tuple(int(c*frame.heading_alpha) for c in (198, 190, 219))
         self.heading.configure(text="" if self.args.no_text else frame.heading, fg=heading_color)
-        caption = "SPACE 暂停   ← → 穿梭   R 重播   F11 全屏   H 隐藏帮助   ESC 退出" if self.help else frame.caption
-        alpha = .85 if self.help else frame.caption_alpha
+        caption = frame.caption
+        alpha = frame.caption_alpha
+        if self.help:
+            caption = "点击下方按钮即可操作。空格暂停，左右方向键穿梭，Esc 退出。"
+            alpha = .85
+        elif not caption and self.position < 5:
+            caption = "约 2 分 24 秒，自动循环。随时可点击下方按钮暂停或退出。"
+            alpha = .7
         caption_color = "#%02x%02x%02x" % tuple(int(c*alpha) for c in (164, 151, 191))
         self.caption.configure(text=caption if self.help or not self.args.no_text else "", fg=caption_color)
 
@@ -209,6 +248,7 @@ class Film:
 
     def toggle_pause(self, event=None):
         self.paused = not self.paused
+        self.buttons["pause"].configure(text="继续" if self.paused else "暂停")
         self.report["pauseToggles"] = self.report.get("pauseToggles", 0)+1
         return "break"
 
@@ -227,10 +267,12 @@ class Film:
 
     def toggle_help(self):
         self.help = not self.help
+        self.buttons["help"].configure(text="收起说明" if self.help else "操作说明")
 
     def toggle_fullscreen(self):
         self.fullscreen = not self.fullscreen
         self.root.attributes("-fullscreen", self.fullscreen)
+        self.buttons["fullscreen"].configure(text="退出全屏" if self.fullscreen else "全屏")
         self.resize_pending = True
 
     def save_report(self, status, error=None):

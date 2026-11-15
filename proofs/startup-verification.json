@@ -1,0 +1,27 @@
+{
+  "app": "瞳界·星渊",
+  "version": "1.1.0",
+  "frozen": true,
+  "python": "3.10.11",
+  "numpy": "1.26.4",
+  "tk": 8.6,
+  "canvasItemTypes": [
+    "text"
+  ],
+  "controls": [
+    "pause",
+    "restart",
+    "fullscreen",
+    "help",
+    "exit"
+  ],
+  "loopEndpoints": "black",
+  "status": "passed",
+  "frames": 23,
+  "guiSubsystem": true,
+  "isolatedWorkingDirectory": true,
+  "pythonEnvironmentIgnored": true,
+  "doubleClickEntry": true,
+  "zipSha256": "d3425ff81297632d8ca71464880d5c95df1dd0b9643009beb1dcef701d630275",
+  "zipBytes": 23666201
+}

@@ -4,6 +4,8 @@ __pycache__/
 venv/
 .pytest_cache/
 /legacy/
+/build/
+/dist/
 /proofs/*
 !/proofs/VERIFICATION.md
 !/proofs/final-live.json
@@ -11,3 +13,4 @@ venv/
 !/proofs/tests-final.txt
 !/proofs/prepublish-tests.txt
 !/proofs/prepublish-live.json
+!/proofs/startup-verification.json

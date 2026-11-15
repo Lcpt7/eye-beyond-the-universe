@@ -33,4 +33,33 @@ jobs:
       - name: Run headless regression tests
         run: python -X utf8 -m unittest discover -s tests -v
       - name: Compile Python sources
-        run: python -m compileall -q beyond.py beyond_field.py tests
+        run: python -m compileall -q beyond.py beyond_field.py desktop.py start_here.py app_info.py tools tests
+
+  windows-portable:
+    if: github.event_name == 'push'
+    needs: test
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@6d4fd22b20465ccc0f7354476588e8df7c9ca0e0 # v7.1.0
+        with:
+          python-version: '3.10'
+          cache: pip
+          cache-dependency-path: requirements-build.txt
+      - name: Install build tools
+        run: python -m pip install -r requirements-build.txt
+      - name: Build offline Windows viewer
+        run: python -X utf8 tools/build_windows.py
+      - name: Verify the actual ZIP with isolated Python environment variables
+        run: python -X utf8 tools/verify_windows_bundle.py
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: EyeBeyond-Windows-x64
+          path: |
+            dist/EyeBeyond-Windows-x64.zip
+            dist/SHA256SUMS.txt
+            dist/portable-verification.json
+          if-no-files-found: error
+          retention-days: 14
